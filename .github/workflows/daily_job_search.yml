@@ -1,0 +1,29 @@
+name: Daily Job Search Agent
+
+on:
+  schedule:
+    - cron: "30 9 * * *"  # runs at 3:00 PM IST (9:30 AM UTC)
+  workflow_dispatch:       # manual run option
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run job search
+        env:
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          BING_API_KEY: ${{ secrets.BING_API_KEY }}
+        run: python job_agent.py
